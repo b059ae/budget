@@ -31,11 +31,11 @@ AppAsset::register($this);
             <div class="container">
                 <div class="clearfix">
                     <div class="pull-left">
-                        <?=
+                        <?/*=
                         Breadcrumbs::widget([
                             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                         ])
-                        ?>
+                        */?>
                     </div>
                     <div class="pull-right">
                         <?=

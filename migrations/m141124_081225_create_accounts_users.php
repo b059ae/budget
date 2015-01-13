@@ -14,7 +14,7 @@ class m141124_081225_create_accounts_users extends Migration {
             'date_updated' => Schema::TYPE_DATETIME . ' DEFAULT NULL COMMENT "Дата изменения"',
             'active'      => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "Отметка об активности"',
             'deleted'      => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "Отметка об удалении"',
-        ]);
+        ],'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB');
         //users
         $this->createIndex('idx_accounts_users_user_id', 'accounts_users', 'user_id');
         $this->addForeignKey('fk_accounts_users_user_id', 'accounts_users', 'user_id', 'users', 'id', 'CASCADE', 'CASCADE');

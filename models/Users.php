@@ -63,7 +63,7 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
      * @return boolean if password provided is valid for current user
      */
     public function validatePassword($password) {
-        return $this->hashPassword($password, $this->username) === $this->hash;
+        return $this->hashPassword($password, $this->username) === $this->password;
     }
 
     protected function hashPassword($password, $username) {

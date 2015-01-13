@@ -15,7 +15,7 @@ class m141124_081223_create_users extends Migration {
             'date_created' => Schema::TYPE_DATETIME . ' DEFAULT NULL COMMENT "Дата создания"',
             'date_updated' => Schema::TYPE_DATETIME . ' DEFAULT NULL COMMENT "Дата изменения"',
             'deleted'      => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT 0 COMMENT "Отметка об удалении"',
-        ]);
+        ],'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB');
         $this->execute("INSERT INTO users (id, username, password, name, email, date_created) VALUES (1, 'shad3', '".md5('123321'.Yii::$app->params['salt'])."', 'Александр', 'b059ae@gmail.com', NOW())");
         $this->execute("INSERT INTO users (id, username, password, name, email, date_created) VALUES (2, 'sweety', '".md5('123321'.Yii::$app->params['salt'])."', 'Света', 'sweety63@rambler.ru', NOW())");
     }
