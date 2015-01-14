@@ -87,11 +87,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     return Url::toRoute($params);
                 },
-            /* 'update' => function ($url, $model) {
-              return Html::a(Yii::t('yii', 'Update'), Url::toRoute(['operations/update', 'id' => $model->id]), [
-              'class' => 'btn btn-primary btn-xs',
-              ]);
-              }, */
             ],
         ],
     ]);
