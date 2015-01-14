@@ -1,5 +1,12 @@
 <?
+
 use yii\helpers\Url;
 ?>
-<h4><a href="<?=Url::toRoute(['/accounts/view', 'id' => $model['id']])?>"><?=$model['name']?></a></h4>
-<p>Остаток: <?=$model['sum'];?></p>
+
+
+<div class = "panel panel-default">
+    <a href="<?= Url::toRoute(['/accounts/view', 'id' => $model['id']]) ?>">
+        <h1><?= $model['sum']; ?></h1>
+        <h5><?= $model['name'] ?></h5>
+    </a>
+</div>

@@ -28,8 +28,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'layout'       => '{items}{pager}',
         'itemView'     => '_item',
         'itemOptions'  => [
-            'class' => 'col-lg-3 panel panel-primary',
-            'tag'   => 'article'
+            'class' => 'col-lg-3',
+            'tag'   => 'div'
         ],
         'options'      => [
             'class' => 'row',

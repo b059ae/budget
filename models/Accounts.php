@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\AttributeBehavior;
+use app\behaviors\ModelAttributeBehavior;
 use yii\db\Expression;
 use app\models\AccountsUsers;
 
@@ -24,25 +25,23 @@ use app\models\AccountsUsers;
  * @property AccountsUsers[] $accountsUsers
  * @property Operations[] $operations
  */
-class Accounts extends \yii\db\ActiveRecord
-{
+class Accounts extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'accounts';
     }
 
     public static function find() {
-        return parent::find()->onCondition(self::tableName() . '.deleted = 0 AND '.self::tableName() .'.id IN (SELECT account_id FROM '.AccountsUsers::tableName().' au WHERE au.deleted=0 AND au.user_id='.Yii::$app->user->id.')')/*->addOrderBy('id asc')*/;
+        return parent::find()->onCondition(self::tableName() . '.deleted = 0 AND ' . self::tableName() . '.id IN (SELECT account_id FROM ' . AccountsUsers::tableName() . ' au WHERE au.deleted=0 AND au.active=1 AND au.user_id=' . Yii::$app->user->id . ')')/* ->addOrderBy('id asc') */;
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['name', 'user_id'], 'required'],
             [['sum', 'user_id', 'deleted'], 'integer'],
@@ -54,40 +53,36 @@ class Accounts extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Название'),
-            'sum' => Yii::t('app', 'Остаток'),
-            'user_id' => Yii::t('app', 'User ID'),
+            'id'           => Yii::t('app', 'ID'),
+            'name'         => Yii::t('app', 'Название'),
+            'sum'          => Yii::t('app', 'Остаток'),
+            'user_id'      => Yii::t('app', 'User ID'),
             'date_created' => Yii::t('app', 'Дата создания'),
             'date_updated' => Yii::t('app', 'Date Updated'),
-            'deleted' => Yii::t('app', 'Deleted'),
+            'deleted'      => Yii::t('app', 'Deleted'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAccountsUsers()
-    {
+    public function getAccountsUsers() {
         return $this->hasMany(AccountsUsers::className(), ['account_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOperations()
-    {
+    public function getOperations() {
         return $this->hasMany(Operations::className(), ['account_id' => 'id']);
     }
 
@@ -110,6 +105,20 @@ class Accounts extends \yii\db\ActiveRecord
                     return $this->user_id? : Yii::$app->user->id;
                 },
             ],
+            'accountsUsers' => [
+                'class'      => ModelAttributeBehavior::className(),
+                'model'      => new AccountsUsers,
+                'attributes' => [
+                    ActiveRecord::EVENT_AFTER_INSERT => ['account_id', 'user_id', 'active'],
+                ],
+                'value'      => function ($event) {
+                    return [
+                        'account_id' => $this->id,
+                        'user_id'    => $this->user_id? : Yii::$app->user->id,
+                        'active'     => 1,
+                    ];
+                },
+            ],
         ];
     }
 
@@ -120,4 +129,5 @@ class Accounts extends \yii\db\ActiveRecord
         $this->deleted = 1;
         $this->save();
     }
+
 }

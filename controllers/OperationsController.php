@@ -3,8 +3,8 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Operations;
 use app\models\Accounts;
-use app\models\AccountsUsers;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -12,17 +12,17 @@ use yii\web\ServerErrorHttpException;
 use yii\filters\AccessControl;
 
 /**
- * AccountsController implements the CRUD actions for Accounts model.
+ * OperationsController implements the CRUD actions for Operations model.
  */
-class AccountsController extends Controller
-{
+class OperationsController extends Controller {
+
     public function behaviors() {
         return [
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view', 'print'],
+                        'actions' => ['index', 'create', 'update', 'delete'],
                         'allow'   => true,
                         'roles'   => ['@'],
                     ],
@@ -32,100 +32,96 @@ class AccountsController extends Controller
     }
 
     /**
-     * Lists all Accounts models.
+     * Lists all Operations models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $dataProvider = new ActiveDataProvider([
-            'query' => Accounts::find(),
+            'query' => Operations::find(),
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionIncome() {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Operations::find()->where(['sum>0'])->joinWith('accounts'),
+        ]);
+
+        return $this->render('index', [
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Accounts model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new Accounts model.
+     * Creates a new Operations model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-        $model = new Accounts();
+    public function actionCreate() {
+        /* if (!Accounts::find()->where([ 'id' => $account_id])->exists())
+          throw new NotFoundHttpException(Yii::t('app', 'Счет не найден.')); */
+
+
+        $model             = new Operations();
+        $model->account_id = Yii::$app->request->getQueryParam('account_id');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            /*$au = new AccountsUsers;
-            $au->setAttributes([
-                'account_id'=>$model->id,
-                'account_id'=>$model->id,
-            ]);*/
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['accounts/view', 'id' => $model->account_id]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
 
     /**
-     * Updates an existing Accounts model.
+     * Updates an existing Operations model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['accounts/view', 'id' => $model->account_id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
 
     /**
-     * Deletes an existing Accounts model.
+     * Deletes an existing Operations model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
+    public function actionDelete($id) {
+        $model      = $this->findModel($id);
+        $account_id = $model->account_id;
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['accounts/view', 'id' => $account_id]);
     }
 
     /**
-     * Finds the Accounts model based on its primary key value.
+     * Finds the Operations model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Accounts the loaded model
+     * @return Operations the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = Accounts::findOne($id)) !== null) {
+    protected function findModel($id) {
+        if (($model = Operations::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

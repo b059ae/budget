@@ -18,7 +18,7 @@ $this->title = $name;
     </div>
 
     <p>
-        Если вы считаете, что это ошибка сервера, то, пожалуйста, сообщите о ней на почту <a href="mailto:web@yugrusiagro.ru">web@yugrusiagro.ru</a>
+        Если вы считаете, что это ошибка сервера, то, пожалуйста, сообщите о ней на почту <a href="mailto:<?=Yii::$app->params['adminEmail']?>"><?=Yii::$app->params['adminEmail']?></a>
     </p>
 
 </div>
